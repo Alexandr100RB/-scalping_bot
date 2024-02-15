@@ -10,4 +10,5 @@ public class TgScalpingApplication {
 		SpringApplication.run(TgScalpingApplication.class, args);
 	}
 
+	
 }
