@@ -17,9 +17,10 @@ public class CandleConfiguration {
     private static final String STREAM_ID = "candleStream";
     private static final Logger log = LoggerFactory.getLogger(CandleConfiguration.class);
 
+
     @Bean
     public InvestApi investApi() {
-        return  InvestApi.createReadonly(
+        return  InvestApi.createSandbox(
                 System.getenv("tinkoffToken")
         );
     }
@@ -30,7 +31,7 @@ public class CandleConfiguration {
 
     @Bean
     public CandleProcessor candleProcessor() {
-        return new CandleProcessor();
+        return new CandleProcessor(candleHandler);
     }
 
     @Bean
