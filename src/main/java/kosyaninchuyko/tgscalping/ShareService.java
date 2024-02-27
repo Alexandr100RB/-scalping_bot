@@ -5,10 +5,10 @@ import ru.tinkoff.piapi.contract.v1.Share;
 import java.util.List;
 import java.util.Optional;
 
-public class TinkoffService {
+public class ShareService {
     private final List<Share> shareList;
 
-    public TinkoffService(List<Share> shareList) {
+    public ShareService(List<Share> shareList) {
         this.shareList = shareList;
     }
 

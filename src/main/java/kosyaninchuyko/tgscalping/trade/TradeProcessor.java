@@ -1,5 +1,7 @@
-package kosyaninchuyko.tgscalping;
+package kosyaninchuyko.tgscalping.trade;
 
+import kosyaninchuyko.tgscalping.trade.candle.CandleConverter;
+import kosyaninchuyko.tgscalping.trade.candle.CandleHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.tinkoff.piapi.contract.v1.Candle;
@@ -10,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CandleProcessor implements StreamProcessor<MarketDataResponse> {
-    private static final Logger log = LoggerFactory.getLogger(CandleProcessor.class);
+public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
+    private static final Logger log = LoggerFactory.getLogger(TradeProcessor.class);
 
     private static final List<Candle> candles = new ArrayList<>();
     private final CandleHandler candleHandler;
 
-    public CandleProcessor(CandleHandler candleHandler) {
+    public TradeProcessor(CandleHandler candleHandler) {
         this.candleHandler = candleHandler;
     }
 
@@ -39,13 +41,9 @@ public class CandleProcessor implements StreamProcessor<MarketDataResponse> {
             }
 
         }
+
         if (candles.size() == 2) {
             candleHandler.handle(candles.stream().map(CandleConverter::toCandle).toList());
         }
-
-//        log.info("\n OPEN = {}\n HIGH = {}\n CLOSE = {}\n LOW = {}",
-//                response.getCandle().getOpen(), response.getCandle().getHigh(),
-//                response.getCandle().getClose(), response.getCandle().getLow());
-        //ScalpingProcessor.createAcc(response);
     }
 }
