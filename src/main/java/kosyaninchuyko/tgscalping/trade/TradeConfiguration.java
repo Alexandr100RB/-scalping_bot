@@ -1,7 +1,8 @@
 package kosyaninchuyko.tgscalping.trade;
 
 import kosyaninchuyko.tgscalping.ShareService;
-import kosyaninchuyko.tgscalping.trade.candle.CandleHandler;
+import kosyaninchuyko.tgscalping.order.OrderService;
+import kosyaninchuyko.tgscalping.trade.candle.HistoricCandleHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -32,8 +33,9 @@ public class TradeConfiguration {
     }
 
     @Bean
-    public TradeProcessor tradeProcessor(CandleHandler candleHandler) {
-        return new TradeProcessor(candleHandler);
+    public TradeProcessor tradeProcessor(HistoricCandleHandler historicCandleHandler,
+                                         OrderService orderService) {
+        return new TradeProcessor(historicCandleHandler, orderService);
     }
 
     @Bean

@@ -1,16 +1,10 @@
 package kosyaninchuyko.tgscalping.trade.candle;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import kosyaninchuyko.tgscalping.ShareService;
-import kosyaninchuyko.tgscalping.order.OrderService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.tinkoff.piapi.contract.v1.Account;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.core.InvestApi;
-import ru.tinkoff.piapi.core.SandboxService;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * Конфигурация бинов обработки свечей
@@ -21,9 +15,8 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 public class CandleConfiguration {
     @Bean
-    CandleHandler candleHandler(OrderService orderService,
-                                InvestApi investApi,
-                                ShareService shareService) {
+    HistoricCandleHandler candleHandler(InvestApi investApi,
+                                        ShareService shareService) {
         var accounts = investApi.getSandboxService().getAccountsSync();
         var sandboxService = investApi.getSandboxService();
         if (accounts.isEmpty()) {
@@ -36,10 +29,9 @@ public class CandleConfiguration {
                     .build()
             );
         }
-        return new CandleHandler(
-                orderService,
+        return new HistoricCandleHandler(
                 sandboxService.getAccountsSync().stream().findAny().orElseThrow(),
-                shareService
-        );
+                shareService,
+                investApi.getMarketDataService());
     }
 }
