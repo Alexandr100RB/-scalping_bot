@@ -1,5 +1,8 @@
-package kosyaninchuyko.tgscalping;
+package kosyaninchuyko.tgscalping.trade;
 
+import kosyaninchuyko.tgscalping.ShareService;
+import kosyaninchuyko.tgscalping.order.OrderService;
+import kosyaninchuyko.tgscalping.trade.candle.HistoricCandleHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -13,9 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Configuration
-public class CandleConfiguration {
-    private static final String STREAM_ID = "candleStream";
-    private static final Logger log = LoggerFactory.getLogger(CandleConfiguration.class);
+public class TradeConfiguration {
+    private static final String STREAM_ID = "tradeStream";
+    private static final Logger log = LoggerFactory.getLogger(TradeConfiguration.class);
 
 
     @Bean
@@ -30,25 +33,26 @@ public class CandleConfiguration {
     }
 
     @Bean
-    public CandleProcessor candleProcessor() {
-        return new CandleProcessor(candleHandler);
+    public TradeProcessor tradeProcessor(HistoricCandleHandler historicCandleHandler,
+                                         OrderService orderService) {
+        return new TradeProcessor(historicCandleHandler, orderService);
     }
 
     @Bean
-    public TinkoffService tinkoffService(InvestApi investApi) {
-        return new TinkoffService(investApi.getInstrumentsService().getTradableSharesSync());
+    public ShareService tinkoffService(InvestApi investApi) {
+        return new ShareService(investApi.getInstrumentsService().getTradableSharesSync());
     }
 
     @Bean
     public MarketDataSubscriptionService marketDataSubscriptionService(
             MarketDataStreamService marketDataStreamService,
-            CandleProcessor candleProcessor,
-            TinkoffService tinkoffService) {
-        MarketDataSubscriptionService service = marketDataStreamService.newStream(STREAM_ID, candleProcessor,
+            TradeProcessor tradeProcessor,
+            ShareService shareService) {
+        MarketDataSubscriptionService service = marketDataStreamService.newStream(STREAM_ID, tradeProcessor,
                 error -> log.error("Error happened: error={}", error.getMessage()));
-        Optional<Share> share = tinkoffService.getShareByTicker("YNDX");
+        Optional<Share> share = shareService.getShareByTicker("YNDX");
         if (share.isEmpty()) {
-            throw new RuntimeException("We didn't find it");
+            throw new RuntimeException("Share was not found");
         }
         service.subscribeCandles(List.of(share.get().getFigi()));
         return service;
