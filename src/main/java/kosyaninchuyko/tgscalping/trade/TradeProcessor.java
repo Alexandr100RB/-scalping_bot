@@ -1,5 +1,6 @@
 package kosyaninchuyko.tgscalping.trade;
 
+import kosyaninchuyko.tgscalping.trade.candle.CandleAnalyticStatus;
 import kosyaninchuyko.tgscalping.trade.candle.CandleConverter;
 import kosyaninchuyko.tgscalping.trade.candle.CandleHandler;
 import org.slf4j.Logger;
@@ -41,9 +42,12 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
             }
 
         }
+        if (candles.size() != 2) {
+            return;
+        }
+        CandleAnalyticStatus result = candleHandler.handle(candles.stream().map(CandleConverter::toCandle).toList());
+        if (result == CandleAnalyticStatus.SUCCESS) {
 
-        if (candles.size() == 2) {
-            candleHandler.handle(candles.stream().map(CandleConverter::toCandle).toList());
         }
     }
 }

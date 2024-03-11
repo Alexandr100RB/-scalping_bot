@@ -21,12 +21,9 @@ public class CandleHandler {
         this.shareService = shareService;
     }
 
-    public void handle(List<Candle> candles) {
+    public CandleAnalyticStatus handle(List<Candle> candles) {
         candles.sort(Comparator.comparing(Candle::getSeconds));
-        orderService.createOrder(Order.builder()
-                .withAccountId(account.getId())
-                .withIntrumentId(shareService.getShareByTicker("YNDX").orElseThrow()
-                        .getFigi())
-                .build());
+
+        return CandleAnalyticStatus.SUCCESS;
     }
 }
