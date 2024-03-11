@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import ru.tinkoff.piapi.core.InvestApi;
 
 /**
- * Конфигурация бинов обработки свечей
+ * Конфигурация бинов свечей
  *
  * @author Alexey Chuyko
  * @since 11.03.2024
