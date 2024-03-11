@@ -1,14 +1,15 @@
 package kosyaninchuyko.tgscalping.trade.candle;
 
 import kosyaninchuyko.tgscalping.ShareService;
-import kosyaninchuyko.tgscalping.order.Order;
 import kosyaninchuyko.tgscalping.order.OrderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.tinkoff.piapi.contract.v1.Account;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class CandleHandler {
+    private static final Logger log = LoggerFactory.getLogger(CandleHandler.class);
     private final OrderService orderService;
     private final Account account;
     private final ShareService shareService;
@@ -22,8 +23,6 @@ public class CandleHandler {
     }
 
     public CandleAnalyticStatus handle(List<Candle> candles) {
-        candles.sort(Comparator.comparing(Candle::getSeconds));
-
         return CandleAnalyticStatus.SUCCESS;
     }
 }

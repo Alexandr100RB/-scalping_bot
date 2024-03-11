@@ -30,11 +30,13 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
             candles.add(response.getCandle());
             return;
         }
+
         if (candles.size() >= 2) {
             for (int i = 0; i < candles.size()-2; i++) {
                 candles.remove(i);
             }
         }
+
         if (candles.size() == 1) {
             Candle candle = candles.get(0);
             if (candle.getTime().getSeconds() != response.getCandle().getTime().getSeconds()) {
@@ -47,7 +49,6 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
         }
         CandleAnalyticStatus result = candleHandler.handle(candles.stream().map(CandleConverter::toCandle).toList());
         if (result == CandleAnalyticStatus.SUCCESS) {
-
         }
     }
 }
