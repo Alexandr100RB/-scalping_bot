@@ -32,10 +32,10 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
             return;
         }
 
-        //Получаем исторические свечки и ебашим алгоритм -> статус
+        //Получаем исторические свечки и реализуем алгоритм -> статус
         var historicCandleStatus = historicCandleHandler.handle();
 
-        //Смотрим, чтобы оба вернули саксекс -> заявка
+        //Смотрим, чтобы оба вернули успех -> заявка
         if (historicCandleStatus == AnalyticStatus.SUCCESS) {
 
         }
