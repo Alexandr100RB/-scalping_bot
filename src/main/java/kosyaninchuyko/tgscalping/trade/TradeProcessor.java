@@ -26,7 +26,7 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
     @Override
     public void process(MarketDataResponse response) {
         log.info("response = {}", response);
-        //Делим текущую стоимость на цену открытия > 1.05
+        //Делим текущую стоимость на цену открытия > MINIMAL_PERCENT
         var realTimeCandleStatus = analyticRealTimeCandle();
         if (realTimeCandleStatus == AnalyticStatus.FAIL) {
             return;
