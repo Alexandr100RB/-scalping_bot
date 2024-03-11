@@ -3,10 +3,8 @@ package kosyaninchuyko.tgscalping.order;
 import ru.tinkoff.piapi.core.OrdersService;
 
 import javax.annotation.Nonnull;
-
 import java.util.UUID;
 
-import static java.util.Objects.compare;
 import static java.util.Objects.requireNonNull;
 import static kosyaninchuyko.tgscalping.utils.ApiUtils.toQuotation;
 
