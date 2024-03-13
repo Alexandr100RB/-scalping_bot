@@ -79,6 +79,17 @@ public class Order {
         return orderType;
     }
 
+
+    @Override
+    public String toString() {
+        return accountId
+                + " " + orderType
+                + " " + orderDirection
+                + " " + price
+                + " " + quantity
+                + " " + intrumentId;
+    }
+
     /**
      * Билдер для {@link Order}
      */
