@@ -1,5 +1,7 @@
 package kosyaninchuyko.tgscalping.order;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.tinkoff.piapi.core.OrdersService;
 
 import javax.annotation.Nonnull;
@@ -15,6 +17,7 @@ import static kosyaninchuyko.tgscalping.utils.ApiUtils.toQuotation;
  * @since 24.02.2024
  */
 public class OrderService {
+    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
     private final OrdersService ordersService;
 
     public OrderService(OrdersService ordersService) {
@@ -28,6 +31,7 @@ public class OrderService {
      */
     public void createOrder(@Nonnull Order order) {
         requireNonNull(order, "order");
+        log.info("Create order: order={}", order);
         ordersService.postOrder(
                 order.getIntrumentId(),
                 order.getQuantity(),
