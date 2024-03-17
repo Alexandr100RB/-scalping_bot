@@ -16,7 +16,7 @@ import ru.tinkoff.piapi.core.InvestApi;
 @Configuration
 public class CandleConfiguration {
     @Bean
-    HistoricCandleHandler candleHandler(InvestApi investApi,
+    HistoricCandleHandler historicCandleHandler(InvestApi investApi,
                                         ShareService shareService,
                                         AccountService accountService) {
         return new HistoricCandleHandler(

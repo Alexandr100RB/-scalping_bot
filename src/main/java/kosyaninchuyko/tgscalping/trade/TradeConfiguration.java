@@ -47,7 +47,7 @@ public class TradeConfiguration {
     }
 
     @Bean
-    public ShareService tinkoffService(InvestApi investApi) {
+    public ShareService shareService(InvestApi investApi) {
         return new ShareService(investApi.getInstrumentsService().getTradableSharesSync());
     }
 
