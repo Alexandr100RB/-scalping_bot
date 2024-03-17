@@ -79,15 +79,16 @@ public class Order {
         return orderType;
     }
 
-
     @Override
     public String toString() {
-        return accountId
-                + " " + orderType
-                + " " + orderDirection
-                + " " + price
-                + " " + quantity
-                + " " + intrumentId;
+        return "Order{" +
+                "intrumentId='" + intrumentId + '\'' +
+                ", quantity=" + quantity +
+                ", price=" + price +
+                ", orderDirection=" + orderDirection +
+                ", accountId='" + accountId + '\'' +
+                ", orderType=" + orderType +
+                '}';
     }
 
     /**
