@@ -1,6 +1,7 @@
 package kosyaninchuyko.tgscalping.trade.candle;
 
 import kosyaninchuyko.tgscalping.ShareService;
+import kosyaninchuyko.tgscalping.account.AccountService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
@@ -16,21 +17,10 @@ import ru.tinkoff.piapi.core.InvestApi;
 public class CandleConfiguration {
     @Bean
     HistoricCandleHandler historicCandleHandler(InvestApi investApi,
-                                                ShareService shareService) {
-        var accounts = investApi.getSandboxService().getAccountsSync();
-        var sandboxService = investApi.getSandboxService();
-        if (accounts.isEmpty()) {
-            var accountId = sandboxService.openAccountSync();
-            sandboxService.payInSync(
-                    accountId,
-                    MoneyValue.newBuilder()
-                            .setUnits(10000)
-                            .setCurrency("4217")
-                    .build()
-            );
-        }
+                                        ShareService shareService,
+                                        AccountService accountService) {
         return new HistoricCandleHandler(
-                sandboxService.getAccountsSync().stream().findAny().orElseThrow(),
+                accountService.getAccount(),
                 shareService,
                 investApi.getMarketDataService());
     }

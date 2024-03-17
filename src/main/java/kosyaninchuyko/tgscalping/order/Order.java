@@ -79,6 +79,18 @@ public class Order {
         return orderType;
     }
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "intrumentId='" + intrumentId + '\'' +
+                ", quantity=" + quantity +
+                ", price=" + price +
+                ", orderDirection=" + orderDirection +
+                ", accountId='" + accountId + '\'' +
+                ", orderType=" + orderType +
+                '}';
+    }
+
     /**
      * Билдер для {@link Order}
      */
