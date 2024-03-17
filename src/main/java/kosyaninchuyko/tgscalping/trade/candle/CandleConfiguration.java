@@ -15,8 +15,8 @@ import ru.tinkoff.piapi.core.InvestApi;
 @Configuration
 public class CandleConfiguration {
     @Bean
-    HistoricCandleHandler candleHandler(InvestApi investApi,
-                                        ShareService shareService) {
+    HistoricCandleHandler historicCandleHandler(InvestApi investApi,
+                                                ShareService shareService) {
         var accounts = investApi.getSandboxService().getAccountsSync();
         var sandboxService = investApi.getSandboxService();
         if (accounts.isEmpty()) {
