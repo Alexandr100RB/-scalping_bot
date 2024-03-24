@@ -41,6 +41,9 @@ public class Preferences {
     @Column(name = "telegram_bot_token")
     private String telegramBotToken;
 
+    @Column(name = "chat_id")
+    private Integer chatId;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
