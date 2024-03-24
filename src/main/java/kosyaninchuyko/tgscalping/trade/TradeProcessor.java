@@ -49,7 +49,7 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
 
         //Смотрим, чтобы оба вернули успех -> заявка
         if (historicCandleStatus == AnalyticStatus.SUCCESS) {
-            createOrders(response);
+//            createOrders(response);
         }
     }
 

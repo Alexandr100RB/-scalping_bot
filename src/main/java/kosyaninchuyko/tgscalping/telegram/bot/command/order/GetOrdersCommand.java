@@ -1,9 +1,11 @@
 package kosyaninchuyko.tgscalping.telegram.bot.command.order;
 
+import kosyaninchuyko.tgscalping.account.AccountService;
 import kosyaninchuyko.tgscalping.telegram.bot.TelegramBot;
 import kosyaninchuyko.tgscalping.telegram.bot.command.TelegramCommand;
 import kosyaninchuyko.tgscalping.telegram.bot.command.UserCommand;
 import ru.tinkoff.piapi.contract.v1.Account;
+import ru.tinkoff.piapi.contract.v1.AccountStatus;
 import ru.tinkoff.piapi.core.InvestApi;
 
 import javax.annotation.Nonnull;
@@ -19,22 +21,23 @@ import static kosyaninchuyko.tgscalping.telegram.bot.command.CommandRegistry.TG_
 public class GetOrdersCommand implements UserCommand {
     private final InvestApi investApi;
     private final TelegramBot telegramBot;
+    private final AccountService accountService;
 
-    public GetOrdersCommand(InvestApi investApi, TelegramBot telegramBot) {
+    public GetOrdersCommand(InvestApi investApi,
+                            TelegramBot telegramBot,
+                            AccountService accountService) {
         this.investApi = investApi;
         this.telegramBot = telegramBot;
+        this.accountService = accountService;
         TG_COMMANDS.put(TelegramCommand.GET_ORDERS, this);
     }
 
     @Override
     public void execute(long chatId, @Nonnull String message) {
         var sandboxService = investApi.getSandboxService();
-        var accounts = sandboxService.getAccountsSync();
-        var ordersByAccount = accounts.stream().collect(Collectors.toMap(
-                Account::getId,
-                account -> sandboxService.getOrdersSync(account.getId())
-        ));
+        var account = accountService.getAccount();
+        var ordersByAccount = sandboxService.getOrdersSync(account.getId());
         telegramBot.sendMessage(chatId, "Orders by accounts \uD83D\uDC47");
-        telegramBot.sendMessage(chatId, ordersByAccount.toString());
+        telegramBot.sendMessage(chatId, account.getId() + ' ' + ordersByAccount);
     }
 }

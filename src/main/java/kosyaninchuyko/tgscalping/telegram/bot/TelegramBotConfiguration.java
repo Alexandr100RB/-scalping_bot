@@ -1,5 +1,6 @@
 package kosyaninchuyko.tgscalping.telegram.bot;
 
+import kosyaninchuyko.tgscalping.account.AccountService;
 import kosyaninchuyko.tgscalping.property.PropertyInfo;
 import kosyaninchuyko.tgscalping.telegram.bot.command.CommandRegistry;
 import kosyaninchuyko.tgscalping.telegram.bot.command.order.GetOrdersCommand;
@@ -27,8 +28,9 @@ public class TelegramBotConfiguration {
 
     @Bean
     GetOrdersCommand getOrdersCommand(InvestApi investApi,
-                                      TelegramBot telegramBot) {
-        return new GetOrdersCommand(investApi, telegramBot);
+                                      TelegramBot telegramBot,
+                                      AccountService accountService) {
+        return new GetOrdersCommand(investApi, telegramBot, accountService);
     }
 
     @Bean
