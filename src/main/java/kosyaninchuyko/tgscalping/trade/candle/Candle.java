@@ -1,5 +1,7 @@
 package kosyaninchuyko.tgscalping.trade.candle;
 
+import lombok.Builder;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
