@@ -1,6 +1,6 @@
 package kosyaninchuyko.tgscalping.telegram.bot;
 
-import kosyaninchuyko.tgscalping.property.PropertyInfo;
+import kosyaninchuyko.tgscalping.property.PropertyRepository;
 import kosyaninchuyko.tgscalping.telegram.bot.command.TelegramCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,20 +18,20 @@ import static kosyaninchuyko.tgscalping.telegram.bot.command.CommandRegistry.TG_
  */
 public class TelegramBot extends TelegramLongPollingBot {
     private static final Logger log = LoggerFactory.getLogger(TelegramBot.class);
-    private final PropertyInfo propertyInfo;
 
-    public TelegramBot(PropertyInfo propertyInfo) {
-        this.propertyInfo = propertyInfo;
+    private final PropertyRepository propertyRepository;
+    public TelegramBot(PropertyRepository propertyRepository) {
+        this.propertyRepository = propertyRepository;
     }
 
     @Override
     public String getBotUsername() {
-        return propertyInfo.getBotName();
+        return propertyRepository.findById(1L).orElseThrow().getTelegramBotName();
     }
 
     @Override
     public String getBotToken() {
-        return propertyInfo.getBotToken();
+        return propertyRepository.findById(1L).orElseThrow().getTelegramBotToken();
     }
 
     @Override

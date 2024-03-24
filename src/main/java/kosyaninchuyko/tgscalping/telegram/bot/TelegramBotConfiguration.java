@@ -1,8 +1,7 @@
 package kosyaninchuyko.tgscalping.telegram.bot;
 
 import kosyaninchuyko.tgscalping.account.AccountService;
-import kosyaninchuyko.tgscalping.property.PropertyInfo;
-import kosyaninchuyko.tgscalping.telegram.bot.command.CommandRegistry;
+import kosyaninchuyko.tgscalping.property.PropertyRepository;
 import kosyaninchuyko.tgscalping.telegram.bot.command.order.GetOrdersCommand;
 import kosyaninchuyko.tgscalping.telegram.bot.command.start.StartCommand;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +33,7 @@ public class TelegramBotConfiguration {
     }
 
     @Bean
-    TelegramBot telegramBot(PropertyInfo propertyInfo) {
-        return new TelegramBot(propertyInfo);
+    TelegramBot telegramBot(PropertyRepository propertyRepository) {
+        return new TelegramBot(propertyRepository);
     }
 }
