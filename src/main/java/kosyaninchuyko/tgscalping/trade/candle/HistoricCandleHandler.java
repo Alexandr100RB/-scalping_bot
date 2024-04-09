@@ -11,9 +11,11 @@ import ru.tinkoff.piapi.core.MarketDataService;
 import static kosyaninchuyko.tgscalping.utils.ApiUtils.toBigDecimal;
 
 import java.math.BigDecimal;
+
 import java.math.RoundingMode;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 public class HistoricCandleHandler {
@@ -32,7 +34,7 @@ public class HistoricCandleHandler {
 
     public AnalyticStatus handle() {
         List<HistoricCandle> historicCandles = marketDataService.getCandlesSync("BBG006L8G4H1",
-                Instant.now().minus(10, ChronoUnit.MINUTES),
+                Instant.now().minusSeconds(6000),
                 Instant.now(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN);
         int size = historicCandles.size();

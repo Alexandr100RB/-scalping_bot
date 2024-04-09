@@ -4,6 +4,7 @@ import kosyaninchuyko.tgscalping.ShareService;
 import kosyaninchuyko.tgscalping.account.AccountService;
 import kosyaninchuyko.tgscalping.order.Order;
 import kosyaninchuyko.tgscalping.order.OrderService;
+import kosyaninchuyko.tgscalping.trade.candle.Candle;
 import kosyaninchuyko.tgscalping.trade.candle.HistoricCandleHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
     public void process(MarketDataResponse response) {
         //log.info("response = {}", response);
         //Делим текущую стоимость на цену открытия > MINIMAL_PERCENT
+        response.getCandle()
         AnalyticStatus realTimeCandleStatus = analyseRealTimeCandle();
         if (realTimeCandleStatus == AnalyticStatus.FAIL) {
             return;
@@ -55,7 +57,8 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
 
     }
 
-    private AnalyticStatus analyseRealTimeCandle() {
+    private AnalyticStatus analyseRealTimeCandle(Candle candle) {
+
         return AnalyticStatus.SUCCESS;
     }
 
