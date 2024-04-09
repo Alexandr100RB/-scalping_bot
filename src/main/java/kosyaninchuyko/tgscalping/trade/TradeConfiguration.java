@@ -3,6 +3,7 @@ package kosyaninchuyko.tgscalping.trade;
 import kosyaninchuyko.tgscalping.ShareService;
 import kosyaninchuyko.tgscalping.account.AccountService;
 import kosyaninchuyko.tgscalping.order.OrderService;
+import kosyaninchuyko.tgscalping.property.PropertyRepository;
 import kosyaninchuyko.tgscalping.trade.candle.HistoricCandleHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +24,8 @@ public class TradeConfiguration {
 
 
     @Bean
-    public InvestApi investApi() {
-        return  InvestApi.createSandbox(
-                System.getenv("tinkoffToken")
-        );
+    public InvestApi investApi(PropertyRepository propertyRepository) {
+        return  InvestApi.createSandbox(propertyRepository.findById(1L).orElseThrow().getTinkoffToken());
     }
     @Bean
     public MarketDataStreamService marketDataStreamService(InvestApi investApi) {
