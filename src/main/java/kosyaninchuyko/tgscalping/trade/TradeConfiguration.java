@@ -56,8 +56,7 @@ public class TradeConfiguration {
             MarketDataStreamService marketDataStreamService,
             TradeProcessor tradeProcessor,
             ShareService shareService) {
-        MarketDataSubscriptionService service = marketDataStreamService.newStream(STREAM_ID, tradeProcessor,
-                error -> log.error("Error happened: error={}", error.getMessage()));
+        MarketDataSubscriptionService service = createService(marketDataStreamService, tradeProcessor);
         Optional<Share> share = shareService.getShareByTicker("YNDX");
         //Optional<Share> share = shareService.getShareByTicker("TMOS");
 
@@ -68,4 +67,13 @@ public class TradeConfiguration {
         return service;
     }
 
+    private MarketDataSubscriptionService createService(MarketDataStreamService marketDataStreamService,
+                                                        TradeProcessor tradeProcessor) {
+        try {
+            return marketDataStreamService.newStream(STREAM_ID, tradeProcessor,
+                    error -> log.error("Error happened: error={}", error.getMessage()));
+        } catch (Exception _) {
+            return createService(marketDataStreamService, tradeProcessor);
+        }
+    }
 }
