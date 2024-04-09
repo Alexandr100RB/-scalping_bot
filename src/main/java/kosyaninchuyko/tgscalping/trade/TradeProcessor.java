@@ -38,9 +38,9 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
 
     @Override
     public void process(MarketDataResponse response) {
-        log.info("response = {}", response);
+        //log.info("response = {}", response);
         //Делим текущую стоимость на цену открытия > MINIMAL_PERCENT
-        var realTimeCandleStatus = analyseRealTimeCandle();
+        AnalyticStatus realTimeCandleStatus = analyseRealTimeCandle();
         if (realTimeCandleStatus == AnalyticStatus.FAIL) {
             return;
         }
@@ -51,6 +51,8 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
         if (historicCandleStatus == AnalyticStatus.SUCCESS) {
             createOrders(response);
         }
+        System.out.println("Цена инструмента = " + toBigDecimal(response.getCandle().getLow()));
+
     }
 
     private AnalyticStatus analyseRealTimeCandle() {
@@ -64,7 +66,7 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
                 .withIntrumentId(shareService.getShareByTicker("YNDX").orElseThrow().getFigi())
                 .withAccountId(accountService.getAccount().getId())
                 .withQuantity(1L)
-                .withPrice(toBigDecimal(response.getLastPrice().getPrice()))
+                .withPrice(toBigDecimal(response.getCandle().getLow()))
                 .build()
         );
         orderService.createOrder(Order.builder()
@@ -73,7 +75,7 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
                 .withIntrumentId(shareService.getShareByTicker("YNDX").orElseThrow().getFigi())
                 .withAccountId(accountService.getAccount().getId())
                 .withQuantity(1L)
-                .withPrice(toBigDecimal(response.getLastPrice().getPrice()).add(BigDecimal.ONE))
+                .withPrice(toBigDecimal(response.getCandle().getLow()).add(BigDecimal.ONE))
                 .build()
         );
     }

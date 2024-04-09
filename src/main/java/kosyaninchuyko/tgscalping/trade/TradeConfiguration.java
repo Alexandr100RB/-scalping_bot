@@ -59,6 +59,8 @@ public class TradeConfiguration {
         MarketDataSubscriptionService service = marketDataStreamService.newStream(STREAM_ID, tradeProcessor,
                 error -> log.error("Error happened: error={}", error.getMessage()));
         Optional<Share> share = shareService.getShareByTicker("YNDX");
+        //Optional<Share> share = shareService.getShareByTicker("TMOS");
+
         if (share.isEmpty()) {
             throw new RuntimeException("Share was not found");
         }

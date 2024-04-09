@@ -1,10 +1,7 @@
 package kosyaninchuyko.tgscalping.trade.candle;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
