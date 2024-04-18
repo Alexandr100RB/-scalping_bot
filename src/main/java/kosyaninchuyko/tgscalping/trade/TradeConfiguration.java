@@ -57,7 +57,6 @@ public class TradeConfiguration {
             ShareService shareService) {
         MarketDataSubscriptionService service = createService(marketDataStreamService, tradeProcessor);
         Optional<Share> share = shareService.getShareByTicker("YNDX");
-        //Optional<Share> share = shareService.getShareByTicker("TMOS");
 
         if (share.isEmpty()) {
             throw new RuntimeException("Share was not found");
@@ -72,7 +71,7 @@ public class TradeConfiguration {
             return marketDataStreamService.newStream(STREAM_ID, tradeProcessor,
                     error -> log.error("Error happened: error={}", error.getMessage()));
         } catch (RuntimeException e) {
-            log.warn("Restarted");
+            log.warn("Stream has been restarted");
             return createService(marketDataStreamService, tradeProcessor);
         }
     }

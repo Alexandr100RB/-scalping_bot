@@ -1,11 +1,15 @@
 package kosyaninchuyko.tgscalping.trade.candle;
 
-import lombok.Builder;
-
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 
 import static java.util.Objects.requireNonNull;
+
+/**
+ * Класс для работы со свечами
+ *
+ * @since 10.04.2024
+ */
 
 public class Candle {
     @Nonnull

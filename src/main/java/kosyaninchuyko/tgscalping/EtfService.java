@@ -5,6 +5,12 @@ import ru.tinkoff.piapi.contract.v1.Etf;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Сервис для работы с фондами
+ *
+ * @since 10.04.2024
+ */
+
 public class EtfService {
     private final List<Etf> etfList;
 

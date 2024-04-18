@@ -8,15 +8,21 @@ import ru.tinkoff.piapi.contract.v1.Account;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.core.MarketDataService;
-import static kosyaninchuyko.tgscalping.utils.ApiUtils.toBigDecimal;
 
 import java.math.BigDecimal;
-
 import java.math.RoundingMode;
 import java.time.Instant;
-
-import java.time.temporal.TemporalUnit;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import static kosyaninchuyko.tgscalping.utils.ApiUtils.toBigDecimal;
+
+/**
+ * Класс для работы с историческими свечами
+ *
+ * @since 10.04.2024
+ */
 
 public class HistoricCandleHandler {
     private static final Logger log = LoggerFactory.getLogger(HistoricCandleHandler.class);
@@ -33,9 +39,10 @@ public class HistoricCandleHandler {
     }
 
     public AnalyticStatus handle() {
+        Instant currentTime = Instant.now();
         List<HistoricCandle> historicCandles = marketDataService.getCandlesSync("BBG006L8G4H1",
-                Instant.now().minusSeconds(6000),
-                Instant.now(),
+                currentTime.minusSeconds(300),
+                currentTime,
                 CandleInterval.CANDLE_INTERVAL_1_MIN);
         int size = historicCandles.size();
         HistoricCandle previousCandle = historicCandles.get(size-2);
@@ -44,17 +51,17 @@ public class HistoricCandleHandler {
                 .divide(toBigDecimal(previousCandle.getClose()), 3, RoundingMode.FLOOR);
         BigDecimal currentCandleRate = toBigDecimal(currentCandle.getOpen())
                 .divide(toBigDecimal(currentCandle.getClose()), 3, RoundingMode.FLOOR);
-        System.out.println("Previous candle open = " + toBigDecimal(previousCandle.getOpen())
-                        + ", Previous candle close = " + toBigDecimal(previousCandle.getClose())
-                        + ", Rate = " + previousCandleRate
-                        + "\nCurrent candle open = " + toBigDecimal(currentCandle.getOpen())
-                        + ", Current candle close " + toBigDecimal(currentCandle.getClose())
-                        + ", Rate = " + currentCandleRate);
-        if (previousCandleRate.compareTo(currentCandleRate) > 0) {
-            System.out.println("Успех по историческим свечкам");
+        log.info("\n    Previous candle open = " + toBigDecimal(previousCandle.getOpen())
+                + ", Previous candle close = " + toBigDecimal(previousCandle.getClose())
+                + ", Rate = " + previousCandleRate
+                + "\n    Current candle open = " + toBigDecimal(currentCandle.getOpen())
+                + ", Current candle close " + toBigDecimal(currentCandle.getClose())
+                + ", Rate = " + currentCandleRate);
+        if (previousCandleRate.compareTo(currentCandleRate) < 0) {
+            log.info("\n    Успех по историческим свечкам");
             return AnalyticStatus.SUCCESS;
         } else {
-            System.out.println("Неуспех по историческим свечкам");
+            log.info("\n    Неуспех по историческим свечкам");
             return AnalyticStatus.FAIL;
         }
     }

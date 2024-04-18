@@ -5,6 +5,12 @@ import ru.tinkoff.piapi.contract.v1.Share;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Сервис для работы с акциями
+ *
+ * @since 10.04.2024
+ */
+
 public class ShareService {
     private final List<Share> shareList;
 

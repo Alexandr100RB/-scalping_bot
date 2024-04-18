@@ -4,10 +4,10 @@ import kosyaninchuyko.tgscalping.ShareService;
 import kosyaninchuyko.tgscalping.account.AccountService;
 import kosyaninchuyko.tgscalping.order.Order;
 import kosyaninchuyko.tgscalping.order.OrderService;
-import kosyaninchuyko.tgscalping.trade.candle.Candle;
 import kosyaninchuyko.tgscalping.trade.candle.HistoricCandleHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.tinkoff.piapi.contract.v1.Candle;
 import ru.tinkoff.piapi.contract.v1.MarketDataResponse;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -39,10 +39,8 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
 
     @Override
     public void process(MarketDataResponse response) {
-        //log.info("response = {}", response);
         //Делим текущую стоимость на цену открытия > MINIMAL_PERCENT
-        response.getCandle()
-        AnalyticStatus realTimeCandleStatus = analyseRealTimeCandle();
+        AnalyticStatus realTimeCandleStatus = analyseRealTimeCandle(response);
         if (realTimeCandleStatus == AnalyticStatus.FAIL) {
             return;
         }
@@ -51,15 +49,20 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
 
         //Смотрим, чтобы оба вернули успех -> заявка
         if (historicCandleStatus == AnalyticStatus.SUCCESS) {
-//            createOrders(response);
+            createOrders(response);
         }
-        System.out.println("Цена инструмента = " + toBigDecimal(response.getCandle().getLow()));
-
+        log.info("\n    Share price = " + toBigDecimal(response.getCandle().getLow()));
     }
 
-    private AnalyticStatus analyseRealTimeCandle(Candle candle) {
-
-        return AnalyticStatus.SUCCESS;
+    private AnalyticStatus analyseRealTimeCandle(MarketDataResponse response) {
+        Candle candle = response.getCandle();
+//        System.out.println("\n      " + toBigDecimal(candle.getOpen()) + "\n      " +
+//                toBigDecimal(candle.getClose()));
+        if (toBigDecimal(candle.getOpen()).compareTo(toBigDecimal(candle.getClose())) < 0) {
+            return AnalyticStatus.SUCCESS;
+        } else {
+            return AnalyticStatus.FAIL;
+        }
     }
 
     private void createOrders(MarketDataResponse response) {
@@ -78,7 +81,7 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
                 .withIntrumentId(shareService.getShareByTicker("YNDX").orElseThrow().getFigi())
                 .withAccountId(accountService.getAccount().getId())
                 .withQuantity(1L)
-                .withPrice(toBigDecimal(response.getCandle().getLow()).add(BigDecimal.ONE))
+                .withPrice(toBigDecimal(response.getCandle().getLow()).add(BigDecimal.valueOf(3)))
                 .build()
         );
     }
