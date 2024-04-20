@@ -13,15 +13,21 @@ import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.core.stream.StreamProcessor;
 
+import javax.annotation.Nonnull;
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 
+import static java.util.Objects.isNull;
 import static kosyaninchuyko.tgscalping.utils.ApiUtils.toBigDecimal;
 
 
 public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
     private static final Logger log = LoggerFactory.getLogger(TradeProcessor.class);
 
-    private static final double MINIMAL_PERCENT = 1.025;
+    private static final double MINIMAL_PERCENT = 1.015;
+    private static OffsetDateTime LAST_TRADE_TIME = null;
+    private static final int MAX_TIMEOUT = 60;
     private final HistoricCandleHandler historicCandleHandler;
     private final OrderService orderService;
     private final AccountService accountService;
@@ -48,16 +54,15 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
         var historicCandleStatus = historicCandleHandler.handle();
 
         //Смотрим, чтобы оба вернули успех -> заявка
-        if (historicCandleStatus == AnalyticStatus.SUCCESS) {
+        if (historicCandleStatus == AnalyticStatus.SUCCESS
+                && checkTimeTrade(OffsetDateTime.now()) == AnalyticStatus.SUCCESS) {
             createOrders(response);
         }
-        log.info("\n    Share price = " + toBigDecimal(response.getCandle().getLow()));
+        log.info("Share price={}", toBigDecimal(response.getCandle().getLow()));
     }
 
     private AnalyticStatus analyseRealTimeCandle(MarketDataResponse response) {
         Candle candle = response.getCandle();
-//        System.out.println("\n      " + toBigDecimal(candle.getOpen()) + "\n      " +
-//                toBigDecimal(candle.getClose()));
         if (toBigDecimal(candle.getOpen()).compareTo(toBigDecimal(candle.getClose())) < 0) {
             return AnalyticStatus.SUCCESS;
         } else {
@@ -81,8 +86,20 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
                 .withIntrumentId(shareService.getShareByTicker("YNDX").orElseThrow().getFigi())
                 .withAccountId(accountService.getAccount().getId())
                 .withQuantity(1L)
-                .withPrice(toBigDecimal(response.getCandle().getLow()).add(BigDecimal.valueOf(3)))
+                .withPrice(toBigDecimal(response.getCandle().getLow()).multiply(BigDecimal.valueOf(MINIMAL_PERCENT)))
                 .build()
         );
+    }
+
+    private AnalyticStatus checkTimeTrade(@Nonnull OffsetDateTime now) {
+        if (isNull(LAST_TRADE_TIME)) {
+            LAST_TRADE_TIME = now;
+            return AnalyticStatus.SUCCESS;
+        }
+        if (Duration.between(LAST_TRADE_TIME, now).getSeconds() >= MAX_TIMEOUT) {
+            LAST_TRADE_TIME = now;
+            return AnalyticStatus.SUCCESS;
+        }
+        return AnalyticStatus.FAIL;
     }
 }
