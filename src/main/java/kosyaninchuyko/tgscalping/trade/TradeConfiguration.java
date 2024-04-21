@@ -57,7 +57,6 @@ public class TradeConfiguration {
             ShareService shareService) {
         MarketDataSubscriptionService service = createService(marketDataStreamService, tradeProcessor);
         Optional<Share> share = shareService.getShareByTicker("YNDX");
-        System.out.println(share);
 
         if (share.isEmpty()) {
             throw new RuntimeException("Share was not found");
