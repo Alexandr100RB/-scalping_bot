@@ -20,17 +20,14 @@ public class CandleConfiguration {
     private static final Logger log = LoggerFactory.getLogger(TradeProcessor.class);
     @Bean
     HistoricCandleHandler historicCandleHandler(InvestApi investApi,
-                                        ShareService shareService,
-                                        AccountService accountService) {
+                                                AccountService accountService) {
         var sandboxService = investApi.getSandboxService();
         var portfolio = sandboxService.getPortfolioSync(accountService.getAccount().getId());
-        log.info("\n    Account ID = " + portfolio.getAccountId() + "\n    Total Amount Portfolio = "
-                +portfolio.getTotalAmountPortfolio().getUnits() + "." +
-                portfolio.getTotalAmountPortfolio().getNano()/10000000 + " " +
+        log.info("Account ID ={}. Total Amount Portfolio={}.{} {}",
+                portfolio.getAccountId(),
+                portfolio.getTotalAmountPortfolio().getUnits(),
+                portfolio.getTotalAmountPortfolio().getNano()/10000000,
                 portfolio.getTotalAmountPortfolio().getCurrency());
-        return new HistoricCandleHandler(
-                accountService.getAccount(),
-                shareService,
-                investApi.getMarketDataService());
+        return new HistoricCandleHandler(investApi.getMarketDataService());
     }
 }
