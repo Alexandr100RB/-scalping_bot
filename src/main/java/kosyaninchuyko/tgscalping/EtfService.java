@@ -22,6 +22,11 @@ public class EtfService {
         return etfList;
     }
 
+    /**
+     * Получение информации о фонде
+     *
+     * @param ticker тикер фонда
+     */
     public Optional<Etf> getEtfByTicker(String ticker) {
         return etfList.stream()
                 .filter(etf -> ticker.equals(etf.getTicker()))

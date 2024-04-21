@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Класс для работы со свечами
+ * Класс с информацией о торговой свече
  *
  * @since 10.04.2024
  */

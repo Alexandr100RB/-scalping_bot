@@ -3,7 +3,7 @@ package kosyaninchuyko.tgscalping.trade.candle;
 import kosyaninchuyko.tgscalping.utils.ApiUtils;
 
 /**
- * Сборщик свечей
+ * Конвертер свечей
  *
  * @since 10.04.2024
  */
