@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Сервис для работы с акциями
+ * Получение информации об акции
  *
  * @since 10.04.2024
  */

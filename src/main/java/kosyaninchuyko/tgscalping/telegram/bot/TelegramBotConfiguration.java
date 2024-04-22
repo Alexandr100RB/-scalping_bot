@@ -4,6 +4,8 @@ import kosyaninchuyko.tgscalping.account.AccountService;
 import kosyaninchuyko.tgscalping.property.PropertyRepository;
 import kosyaninchuyko.tgscalping.telegram.bot.command.order.GetOrdersCommand;
 import kosyaninchuyko.tgscalping.telegram.bot.command.start.StartCommand;
+import kosyaninchuyko.tgscalping.telegram.bot.command.portfolio.GetPortfolioCommand;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.tinkoff.piapi.core.InvestApi;
@@ -30,6 +32,13 @@ public class TelegramBotConfiguration {
                                       TelegramBot telegramBot,
                                       AccountService accountService) {
         return new GetOrdersCommand(investApi, telegramBot, accountService);
+    }
+
+    @Bean
+    GetPortfolioCommand getPortfolioCommand(InvestApi investApi,
+                                      TelegramBot telegramBot,
+                                      AccountService accountService) {
+        return new GetPortfolioCommand(investApi, telegramBot, accountService);
     }
 
     @Bean
