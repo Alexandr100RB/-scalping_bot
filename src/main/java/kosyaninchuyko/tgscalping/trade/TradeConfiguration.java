@@ -69,7 +69,7 @@ public class TradeConfiguration {
                                                         TradeProcessor tradeProcessor) {
         try {
             return marketDataStreamService.newStream(STREAM_ID, tradeProcessor,
-                    error -> log.error("Error happened: error={}", error.getMessage()));
+                    error -> log.error("Error happened: error={}, trace={}", error.getMessage(), error.getCause()));
         } catch (RuntimeException e) {
             log.warn("Stream has been restarted");
             return createService(marketDataStreamService, tradeProcessor);

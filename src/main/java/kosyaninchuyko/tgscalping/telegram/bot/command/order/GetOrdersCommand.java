@@ -53,9 +53,14 @@ public class GetOrdersCommand implements UserCommand {
 
     public String orderToString(OrderState order) {
         MoneyValue price = order.getInitialOrderPrice();
-        return "order id: " + order.getOrderId() + "\ndirection: " + order.getDirection() +
-                "\nfigi: " + order.getFigi() +
-                "\nlots requested: " + order.getLotsRequested() + "\nprice: " +
-                price.getUnits() + "." + price.getNano()/10000000 + " " + price.getCurrency().toUpperCase();
+        return String.format("order id: %s%n direction: %s%n figi: %s%n lots requested: %s%n price: %s.%s %s",
+                order.getOrderId(),
+                order.getDirection(),
+                order.getFigi(),
+                order.getLotsRequested(),
+                price.getUnits(),
+                price.getNano()/10000000,
+                price.getCurrency().toUpperCase()
+        );
     }
 }
