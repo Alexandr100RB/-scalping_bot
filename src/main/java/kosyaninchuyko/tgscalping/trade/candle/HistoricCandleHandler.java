@@ -39,7 +39,7 @@ public class HistoricCandleHandler {
         if (size < 2) {
             return AnalyticStatus.UNDEFINED;
         }
-        historicCandles.sort(Comparator.comparing(candle -> candle.getTime().getNanos()));
+        //historicCandles.sort(Comparator.comparing(candle -> candle.getTime().getSeconds()));
         HistoricCandle previousCandle = historicCandles.get(size-2);
         HistoricCandle currentCandle = historicCandles.get(size-1);
         BigDecimal previousCandleRate = toBigDecimal(previousCandle.getOpen())

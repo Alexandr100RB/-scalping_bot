@@ -27,7 +27,7 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
 
     private static final double MINIMAL_PERCENT = 1.015;
     private static OffsetDateTime LAST_TRADE_TIME = null;
-    private static final int MAX_TIMEOUT = 60;
+    private static final int MAX_TIMEOUT = 5;
     private final HistoricCandleHandler historicCandleHandler;
     private final OrderService orderService;
     private final AccountService accountService;
