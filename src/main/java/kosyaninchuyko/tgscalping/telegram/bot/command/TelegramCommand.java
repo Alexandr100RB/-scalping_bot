@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public enum TelegramCommand {
     START("/start"),
-//    GET_PORTFOLIO("/portfolio"),
+    GET_PORTFOLIO("/portfolio"),
     GET_ORDERS("/orders");
 
     private final String code;

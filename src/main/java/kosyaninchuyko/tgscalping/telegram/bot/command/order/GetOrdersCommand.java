@@ -4,12 +4,15 @@ import kosyaninchuyko.tgscalping.account.AccountService;
 import kosyaninchuyko.tgscalping.telegram.bot.TelegramBot;
 import kosyaninchuyko.tgscalping.telegram.bot.command.TelegramCommand;
 import kosyaninchuyko.tgscalping.telegram.bot.command.UserCommand;
-import ru.tinkoff.piapi.contract.v1.Account;
-import ru.tinkoff.piapi.contract.v1.AccountStatus;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.core.InvestApi;
 
 import javax.annotation.Nonnull;
+
+import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static kosyaninchuyko.tgscalping.telegram.bot.command.CommandRegistry.TG_COMMANDS;
 
@@ -37,7 +40,27 @@ public class GetOrdersCommand implements UserCommand {
         var sandboxService = investApi.getSandboxService();
         var account = accountService.getAccount();
         var ordersByAccount = sandboxService.getOrdersSync(account.getId());
-        telegramBot.sendMessage(chatId, "Orders by accounts \uD83D\uDC47");
-        telegramBot.sendMessage(chatId, account.getId() + ' ' + ordersByAccount);
+        if (ordersByAccount.isEmpty()) {
+            telegramBot.sendMessage(chatId, "No orders by accounts");
+        } else {
+            telegramBot.sendMessage(chatId, ordersByAccount.size() + " orders by accounts \uD83D\uDC47");
+            for (OrderState order: ordersByAccount) {
+                telegramBot.sendMessage(chatId, "acc: " + account.getId() + "\n" +
+                        orderToString(order));
+            }
+        }
+    }
+
+    public String orderToString(OrderState order) {
+        MoneyValue price = order.getInitialOrderPrice();
+        return String.format("order id: %s%n direction: %s%n figi: %s%n lots requested: %s%n price: %s.%s %s",
+                order.getOrderId(),
+                order.getDirection(),
+                order.getFigi(),
+                order.getLotsRequested(),
+                price.getUnits(),
+                price.getNano()/10000000,
+                price.getCurrency().toUpperCase()
+        );
     }
 }

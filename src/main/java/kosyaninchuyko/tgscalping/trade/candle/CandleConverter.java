@@ -2,6 +2,12 @@ package kosyaninchuyko.tgscalping.trade.candle;
 
 import kosyaninchuyko.tgscalping.utils.ApiUtils;
 
+/**
+ * Конвертер свечей
+ *
+ * @since 10.04.2024
+ */
+
 public final class CandleConverter {
     private CandleConverter() {
     }

@@ -7,20 +7,27 @@ import kosyaninchuyko.tgscalping.order.OrderService;
 import kosyaninchuyko.tgscalping.trade.candle.HistoricCandleHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.tinkoff.piapi.contract.v1.Candle;
 import ru.tinkoff.piapi.contract.v1.MarketDataResponse;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.core.stream.StreamProcessor;
 
+import javax.annotation.Nonnull;
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 
+import static java.util.Objects.isNull;
 import static kosyaninchuyko.tgscalping.utils.ApiUtils.toBigDecimal;
 
 
 public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
     private static final Logger log = LoggerFactory.getLogger(TradeProcessor.class);
 
-    private static final double MINIMAL_PERCENT = 1.025;
+    private static final double MINIMAL_PERCENT = 1.015;
+    private static OffsetDateTime LAST_TRADE_TIME = null;
+    private static final int MAX_TIMEOUT = 5;
     private final HistoricCandleHandler historicCandleHandler;
     private final OrderService orderService;
     private final AccountService accountService;
@@ -38,9 +45,8 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
 
     @Override
     public void process(MarketDataResponse response) {
-        log.info("response = {}", response);
         //Делим текущую стоимость на цену открытия > MINIMAL_PERCENT
-        var realTimeCandleStatus = analyseRealTimeCandle();
+        AnalyticStatus realTimeCandleStatus = analyseRealTimeCandle(response);
         if (realTimeCandleStatus == AnalyticStatus.FAIL) {
             return;
         }
@@ -48,13 +54,20 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
         var historicCandleStatus = historicCandleHandler.handle();
 
         //Смотрим, чтобы оба вернули успех -> заявка
-        if (historicCandleStatus == AnalyticStatus.SUCCESS) {
-//            createOrders(response);
+        if (historicCandleStatus == AnalyticStatus.SUCCESS
+                && checkTimeTrade(OffsetDateTime.now()) == AnalyticStatus.SUCCESS) {
+            createOrders(response);
         }
+        log.info("Share price={}", toBigDecimal(response.getCandle().getLow()));
     }
 
-    private AnalyticStatus analyseRealTimeCandle() {
-        return AnalyticStatus.SUCCESS;
+    private AnalyticStatus analyseRealTimeCandle(MarketDataResponse response) {
+        Candle candle = response.getCandle();
+        if (toBigDecimal(candle.getOpen()).compareTo(toBigDecimal(candle.getClose())) < 0) {
+            return AnalyticStatus.SUCCESS;
+        } else {
+            return AnalyticStatus.FAIL;
+        }
     }
 
     private void createOrders(MarketDataResponse response) {
@@ -64,7 +77,7 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
                 .withIntrumentId(shareService.getShareByTicker("YNDX").orElseThrow().getFigi())
                 .withAccountId(accountService.getAccount().getId())
                 .withQuantity(1L)
-                .withPrice(toBigDecimal(response.getLastPrice().getPrice()))
+                .withPrice(toBigDecimal(response.getCandle().getLow()))
                 .build()
         );
         orderService.createOrder(Order.builder()
@@ -73,8 +86,20 @@ public class TradeProcessor implements StreamProcessor<MarketDataResponse> {
                 .withIntrumentId(shareService.getShareByTicker("YNDX").orElseThrow().getFigi())
                 .withAccountId(accountService.getAccount().getId())
                 .withQuantity(1L)
-                .withPrice(toBigDecimal(response.getLastPrice().getPrice()).add(BigDecimal.ONE))
+                .withPrice(toBigDecimal(response.getCandle().getLow()).multiply(BigDecimal.valueOf(MINIMAL_PERCENT)))
                 .build()
         );
+    }
+
+    private AnalyticStatus checkTimeTrade(@Nonnull OffsetDateTime now) {
+        if (isNull(LAST_TRADE_TIME)) {
+            LAST_TRADE_TIME = now;
+            return AnalyticStatus.SUCCESS;
+        }
+        if (Duration.between(LAST_TRADE_TIME, now).getSeconds() >= MAX_TIMEOUT) {
+            LAST_TRADE_TIME = now;
+            return AnalyticStatus.SUCCESS;
+        }
+        return AnalyticStatus.FAIL;
     }
 }

@@ -31,7 +31,7 @@ public class AccountService {
             sandboxService.payInSync(
                     accountId,
                     MoneyValue.newBuilder()
-                            .setUnits(100000)
+                            .setUnits(50000)
                             .setCurrency("4217")
                             .build()
             );
